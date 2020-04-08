@@ -7,7 +7,8 @@
 //
 
 import Foundation
-class GifNetwork {
+
+class GifNetwork{
     
     let apiKey = "93blYhShvwpu3NOf2ZlfIUxYit1uFlgO"
     /**
@@ -17,7 +18,7 @@ class GifNetwork {
     */
     func fetchGifs(searchTerm: String, completion: @escaping (_ response: GifArray?) -> Void) {
         // Create a GET url request
-        let url = URL(string: "https://api.giphy.com/v1/gifs/search?api_key=\(apiKey)&q=\(searchTerm)")!
+        let url = urlBuilder(searchTerm: searchTerm)
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -32,5 +33,24 @@ class GifNetwork {
                 }
             }
         }.resume()
+    }
+    
+    /**
+    Returns a url with our API key and search term
+    - Parameter searchTerm: The string to search gifs of
+    - Returns: URL of search term & api key
+    */
+    func urlBuilder(searchTerm: String) -> URL {
+        let apikey = apiKey
+        var components = URLComponents()
+           components.scheme = "https"
+           components.host = "api.giphy.com"
+           components.path = "/v1/gifs/search"
+           components.queryItems = [
+               URLQueryItem(name: "api_key", value: apikey),
+               URLQueryItem(name: "q", value: searchTerm),
+               URLQueryItem(name: "limit", value: "5") // Edit limit to display more gifs
+           ]
+        return components.url!
     }
 }
